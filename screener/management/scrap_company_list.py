@@ -1,14 +1,15 @@
 import io
 import os
+import shutil
 import time
 
-from django.conf import settings
+from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 DOWNLOAD_PATH = (
-    "/home/ubuntu/downloads"
+    "/home/himanshu/Downloads"
 )
 def all_company_list():
     """
@@ -20,6 +21,8 @@ def all_company_list():
     url = "https://www.bseindia.com/corporates/List_Scrips.html"
 
     remove_file  = os.path.isfile(filepath)
+    if remove_file:
+        os.remove(filepath)
 
     driver_path = "utilities/chromedriver"
     driver = Chrome(executable_path=driver_path)
@@ -32,13 +35,11 @@ def all_company_list():
     driver.execute_script("document.getElementById('btnSubmit')" ".click()")
     select = driver.find_element(By.ID, "lnkDownload")
     select.click()
+    options = webdriver.ChromeOptions() 
+    options.add_argument("download.default_directory=" + DOWNLOAD_PATH)
+    
     time.sleep(10)
     driver.quit()
 
-    with io.open(filepath, encoding="utf-8") as f:
-        content = f.read()
-    return content
+    print("done")
 
-print(all_company_list())
-
-# (["Security Code", "Issuer Name",	"Security Id", "Security Name",	"Status	Group",	"Face Value","Industry"])
